@@ -204,9 +204,17 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Verify Chart.js is loaded
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js failed to load. Please check your internet connection.');
+        } else {
+            console.log('Chart.js loaded successfully');
+        }
+    </script>
     <script src="auth.js"></script>
-    <script src="detection-demo.js"></script>
+    <script src="detection.js"></script>
 </body>
 </html>

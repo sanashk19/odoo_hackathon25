@@ -268,6 +268,12 @@ function loadDashboardData() {
 // Initialize charts
 function initializeCharts() {
     try {
+        // Wait for the DOM to be fully loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeCharts);
+            return;
+        }
+
         const riskCtx = document.getElementById('riskDistributionChart');
         if (!riskCtx) {
             console.warn('Risk distribution chart element not found');
@@ -365,8 +371,11 @@ function initializeCharts() {
                 }
             }
         });
-    });
+    }catch (error) {
+        console.error('Error initializing charts:', error);
+    }
 }
+
 
 // Update charts with demo data
 function updateCharts() {
@@ -682,23 +691,76 @@ function applyFilters() {
 function handleBulkAction() {
     const action = bulkAction.value;
     
-    if (!action || selectedExpenseIds.size === 0) return;
+    if (!action || selectedExpenseIds.size === 0) {
+        alert('Please select at least one expense and choose an action.');
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to ${action} ${selectedExpenseIds.size} selected expense(s)?`)) {
+        return;
+    }
     
     const count = selectedExpenseIds.size;
     const expenseText = count === 1 ? '1 expense' : `${count} expenses`;
+    const actionVerb = action.ends('e') ? action + 'd' : action + 'ed'; // Handle different verb forms
     
-    // In a real app, this would be an API call
-    console.log(`Performing ${action} on ${expenseText}:`, Array.from(selectedExpenseIds));
-    
-    // Show success message
-    alert(`Successfully ${action}d ${expenseText}.`);
-    
-    // Reset selection
-    selectedExpenseIds.clear();
-    selectAllExpenses.checked = false;
-    
-    // Refresh the table
-    renderExpensesTable();
+    try {
+        // Process each selected expense
+        selectedExpenseIds.forEach(expenseId => {
+            const expenseIndex = sampleExpenses.findIndex(e => e.id === expenseId);
+            
+            if (expenseIndex !== -1) {
+                // Update the expense status based on the action
+                switch(action) {
+                    case 'approve':
+                        sampleExpenses[expenseIndex].status = 'approved';
+                        sampleExpenses[expenseIndex].riskLevel = 'low';
+                        break;
+                    case 'reject':
+                        sampleExpenses[expenseIndex].status = 'rejected';
+                        sampleExpenses[expenseIndex].riskLevel = 'high';
+                        break;
+                    case 'escalate':
+                        sampleExpenses[expenseIndex].status = 'escalated';
+                        sampleExpenses[expenseIndex].riskLevel = 'medium';
+                        break;
+                }
+                
+                // Add an audit log entry
+                if (!sampleExpenses[expenseIndex].auditLog) {
+                    sampleExpenses[expenseIndex].auditLog = [];
+                }
+                
+                sampleExpenses[expenseIndex].auditLog.push({
+                    action: action,
+                    timestamp: new Date().toISOString(),
+                    user: userEmail || 'system'
+                });
+                
+                console.log(`Processed ${action} for expense ${expenseId}`);
+            }
+        });
+        
+        // Show success message
+        alert(`Successfully ${actionVerb} ${expenseText}.`);
+        
+        // Update charts and UI
+        updateCharts();
+        
+    } catch (error) {
+        console.error('Error processing bulk action:', error);
+        alert(`Error processing bulk action: ${error.message}`);
+        return;
+    } finally {
+        // Reset selection and refresh the table
+        selectedExpenseIds.clear();
+        if (selectAllExpenses) selectAllExpenses.checked = false;
+        if (bulkAction) bulkAction.value = '';
+        
+        // Refresh the table and update bulk action state
+        renderExpensesTable();
+        updateBulkActionsState();
+    }
 }
 
 // Show expense detail modal
@@ -932,4 +994,52 @@ if (sampleExpenses.length === 0) {
         sampleExpenses[1].riskLevel = 'medium';
         sampleExpenses[1].amount = 800 + (Math.random() * 400);
     }
+}
+
+// Wait for everything to be ready
+function initApplication() {
+    console.log('Initializing application...');
+    
+    // Check if Chart.js is available
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js is not available. Please check if it loaded correctly.');
+        return false;
+    }
+    
+    try {
+        // Initialize core components
+        checkAuth();
+        initializeDateRangePicker();
+        loadDashboardData();
+        
+        // Initialize charts
+        if (typeof initializeCharts === 'function') {
+            initializeCharts();
+        } else {
+            console.error('initializeCharts function not found');
+        }
+        
+        // Set up event listeners
+        if (typeof setupEventListeners === 'function') {
+            setupEventListeners();
+        }
+        
+        if (typeof setupRowEventListeners === 'function') {
+            setupRowEventListeners();
+        }
+        
+        console.log('Application initialized successfully');
+        return true;
+    } catch (error) {
+        console.error('Error initializing application:', error);
+        return false;
+    }
+}
+
+// Start the application when the DOM is fully loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApplication);
+} else {
+    // DOM is already ready
+    initApplication();
 }

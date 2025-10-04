@@ -8,7 +8,7 @@ A web-based platform designed for streamlined submission, automated approval, an
 ## Team SafeNavi
 
 - Jiya Haldankar  
-- Shriya Baht  
+- Shriya Bhat 
 - Sana Shaikh  
 - Prachi Naik
 

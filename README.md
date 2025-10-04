@@ -10,6 +10,7 @@ A web-based platform designed for streamlined submission, automated approval, an
 - Jiya Haldankar  
 - Shriya Baht  
 - Sana Shaikh  
+- Prachi Naik
 
 ---
 

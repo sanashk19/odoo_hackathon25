@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard - SafeNavi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="manage.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="https://img.freepik.com/premium-vector/s-letter-logo-colorful-gradient-design_161396-885.jpg" alt="Logo">
+                <h2>SafeNavi</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-leaf"></i> EcoExpense Tracker</a></li>
+                <li><a href="#" id="approvalQueueLink"><i class="fas fa-tasks"></i> Approval Queue</a></li>
+                <li><a href="detection.html" id="fraudDetectionLink"><i class="fas fa-shield-alt"></i> Fraud Detection</a></li>
+                <li><a href="admin.html" id="adminLink"><i class="fas fa-user-shield"></i> Admin Panel</a></li>
+                <li class="logout-li"><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li class="user-email">
+                    <i class="fas fa-user-tie"></i>
+                    <span id="userEmail"></span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <h1>Approval Queue</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchExpenses" placeholder="Search expenses...">
+                    </div>
+                    <button id="bulkApproveBtn" class="btn btn-outline" disabled>
+                        <i class="fas fa-check-double"></i> Bulk Approve
+                    </button>
+                </div>
+            </header>
+
+            <!-- Pending Approvals Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Pending Approvals</h3>
+                    <div class="filter-actions">
+                        <select id="filterByStatus" class="filter-select">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                        <select id="filterByEmployee" class="filter-select">
+                            <option value="all">All Employees</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="approvalsTable">
+                        <thead>
+                            <tr>
+                                <th width="40"><input type="checkbox" id="selectAll"></th>
+                                <th>Employee</th>
+                                <th>Submission Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approvalsTableBody">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button id="nextPage" disabled><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Approval Modal -->
+    <div id="approvalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Expense Review</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="expense-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Employee:</span>
+                        <span id="modalEmployeeName">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Submission Date:</span>
+                        <span id="modalSubmissionDate">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Category:</span>
+                        <span id="modalCategory">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Description:</span>
+                        <span id="modalDescription">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Amount:</span>
+                        <span id="modalAmount">-</span>
+                        <span id="modalConvertedAmount" class="converted-amount"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Receipt:</span>
+                        <div id="receiptPreview" class="receipt-preview">
+                            <i class="fas fa-receipt"></i>
+                            <span>Receipt_20230515.jpg</span>
+                            <button class="btn-view-receipt">View</button>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Approval Progress:</span>
+                        <div class="approval-steps">
+                            <div class="step active">
+                                <div class="step-number">1</div>
+                                <div class="step-label">Submitted</div>
+                            </div>
+                            <div class="step-connector"></div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-label">Manager Review</div>
+                            </div>
+                            <div class="step-connector"></div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-label">Finance</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="approvalComments">Comments (Required for Rejection)</label>
+                        <textarea id="approvalComments" rows="3" placeholder="Add your comments here..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="rejectBtn" class="btn btn-danger">Reject</button>
+                <button id="approveBtn" class="btn btn-primary">Approve</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal">
+        <div class="modal-content receipt-modal">
+            <div class="modal-header">
+                <h2>Receipt</h2>
+                <span class="close-receipt-modal">&times;</span>
+            <div class="modal-body">
+                <div class="receipt-container">
+                    <img id="receiptImage" src="" alt="Receipt" style="max-width: 100%;">
+                </div>
+            </div>
+        <script src="auth.js"></script>
+    <script>
+        // Set active nav item based on current page
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop();
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.parentElement.classList.remove('active');
+                if (link.getAttribute('href') === currentPage) {
+                    link.parentElement.classList.add('active');
+                }
+            });
+        });
+    </script>
+    <script src="manage.js"></script>
+</body>
+</html>

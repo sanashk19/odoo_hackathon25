@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags for character encoding and responsive viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Expenses - SafeNavi</title>
+    
+    <!-- External CSS Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="empwindow.css">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="expenses-container">
+        <!-- Page Header with Title and Summary -->
+        <header class="expenses-header">
+            <!-- Header Title Section with Back Button -->
+            <div class="header-title">
+                <!-- Back Button to return to Dashboard -->
+                <a href="#" id="backButton" class="back-button" aria-label="Back to Dashboard">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <!-- Main Page Title -->
+                <h1><i class="fas fa-receipt"></i> My Expenses</h1>
+            </div>
+            <!-- Header Actions Section -->
+            <div class="header-actions">
+                <!-- Expense Summary Cards -->
+                <div class="expense-summary">
+                    <!-- To Submit Summary -->
+                    <div class="summary-item to-submit">
+                        <span class="label">To Submit</span>
+                        <span class="amount" id="toSubmitAmount">$0.00</span>
+                    </div>
+                    <!-- Divider between summary items -->
+                    <div class="summary-divider"></div>
+                    <div class="summary-item waiting-approval">
+                        <span class="label">Waiting Approval</span>
+                        <span class="amount" id="waitingApprovalAmount">$0.00</span>
+                    </div>
+                </div>
+                <!-- New Expense Button Placeholder -->
+            </div>
+        </header>
+
+        <!-- Filters Section -->
+        <div class="expenses-filters">
+            <div class="search-box">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input type="text" id="searchExpenses" placeholder="Search expenses..." aria-label="Search expenses">
+            </div>
+            
+            <!-- Status Filter Dropdown -->
+            <div class="filter-group">
+                <label for="statusFilter">Status:</label>
+                <select id="statusFilter" aria-label="Filter by status">
+                    <option value="all">All Expenses</option>
+                    <option value="draft">Drafts</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="pending">Pending Approval</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+            
+            <!-- Date Range Filter Dropdown -->
+            <div class="filter-group">
+                <label for="dateFilter">Date Range:</label>
+                <select id="dateFilter" aria-label="Filter by date range">
+                    <option value="all">All Time</option>
+                    <option value="thisMonth">This Month</option>
+                    <option value="lastMonth">Last Month</option>
+                    <option value="thisYear">This Year</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Expenses Table Container -->
+        <div class="expenses-table-container">
+            <table id="expensesTable" aria-label="Expense Records">
+                <thead>
+                    <tr>
+                        <!-- Sortable Column Headers -->
+                        <th data-sort="date" scope="col">
+                            Date <i class="fas fa-sort" aria-hidden="true"></i>
+                            <span class="sr-only">Sort by date</span>
+                        </th>
+                        <th data-sort="description" scope="col">
+                            Description <i class="fas fa-sort" aria-hidden="true"></i>
+                            <span class="sr-only">Sort by description</span>
+                        </th>
+                        <th data-sort="category" scope="col">
+                            Category <i class="fas fa-sort" aria-hidden="true"></i>
+                            <span class="sr-only">Sort by category</span>
+                        </th>
+                        <th data-sort="amount" scope="col">
+                            Amount <i class="fas fa-sort" aria-hidden="true"></i>
+                            <span class="sr-only">Sort by amount</span>
+                        </th>
+                        <th data-sort="status" scope="col">
+                            Status <i class="fas fa-sort" aria-hidden="true"></i>
+                            <span class="sr-only">Sort by status</span>
+                        </th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="expensesTableBody">
+                    <!-- Table rows will be dynamically populated by JavaScript -->
+            </table>
+        </div>
+    </div>
+
+    <!-- Expense Details Modal with Tabs -->
+    <div id="expenseDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Expense Details</h2>
+                <button class="close-modal" id="closeModalBtn" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs Navigation -->
+                <div class="tabs">
+                    <button type="button" class="tab-button active" data-tab="details">Details</button>
+                    <button type="button" class="tab-button" data-tab="comments">Comments <span id="commentCount">(0)</span></button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Details Tab -->
+                    <div id="detailsTab" class="tab-pane active">
+                        <div id="expenseDetailsContent"></div>
+                    </div>
+
+                    <!-- Comments Tab -->
+                    <div id="commentsTab" class="tab-pane">
+                        <div class="comments-container">
+                            <!-- Existing Comments -->
+                            <div class="comments-list" id="expenseComments">
+                                <div class="no-comments">No comments yet. Be the first to add one!</div>
+                            </div>
+
+                            <!-- Add Comment Form -->
+                            <div class="add-comment">
+                                <h3>Add a Comment</h3>
+                                <form id="commentForm" class="comment-form">
+                                    <div class="form-group">
+                                        <label for="commentText" class="sr-only">Your comment</label>
+                                        <textarea id="commentText" name="commentText" rows="4" placeholder="Type your comment here..." class="form-control" required></textarea>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn btn-outline" id="cancelComment">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane"></i> Post Comment
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Center -->
+{{ ... }}
+        <!-- Notifications will be dynamically added here -->
+    </div>
+
+    <!-- Include auth.js -->
+    <script src="auth.js"></script>
+    
+    <!-- Main JavaScript File -->
+    <script>
+        // Check authentication and role
+        document.addEventListener('DOMContentLoaded', function() {
+            const isAuthenticated = sessionStorage.getItem('isAuthenticated');
+            const userRole = sessionStorage.getItem('userRole');
+            
+            // If not authenticated, redirect to login
+            if (!isAuthenticated) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Set up back button based on user role
+            const backButton = document.getElementById('backButton');
+            if (backButton) {
+                backButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const userRole = sessionStorage.getItem('userRole');
+                    
+                    if (userRole === 'employee') {
+                        window.location.href = 'emp.html';
+                    } else if (userRole === 'manager') {
+                        window.location.href = 'manage.html';
+                    } else if (userRole === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        // Default fallback
+                        window.location.href = 'emp.html';
+                    }
+                });
+            }
+            
+            
+           
+        });
+    </script>
+    
+    <script src="empwindow.js"></script>
+    <!-- Screen Reader Only Text (for accessibility) -->
+    <span class="sr-only">End of expenses page</span>
+</body>
+</html>

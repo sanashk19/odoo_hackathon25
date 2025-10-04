@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SafeNavi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="https://img.freepik.com/premium-vector/s-letter-logo-colorful-gradient-design_161396-885.jpg" alt="Logo">
+                <h2>SafeNavi</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="manage.html" id="dashboardLink"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li class="active"><a href="#" id="userManagementLink"><i class="fas fa-users"></i> User Management</a></li>
+                <li><a href="#" id="workflowLink"><i class="fas fa-project-diagram"></i> Approval Workflows</a></li>
+                <li><a href="#" id="settingsLink"><i class="fas fa-cog"></i> Company Settings</a></li>
+                <li><a href="#" id="aiPolicyLink"><i class="fas fa-robot"></i> AI Policy Assistant</a></li>
+                <li class="logout-li"><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li class="user-email">
+                    <i class="fas fa-user-shield"></i>
+                    <span id="userEmail"></span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- User Management Section -->
+            <section id="userManagementSection" class="admin-section active">
+                <div class="section-header">
+                    <h1><i class="fas fa-users"></i> User Management</h1>
+                    <button id="addUserBtn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add User
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="userSearch" placeholder="Search users...">
+                        </div>
+                        <div class="filter-actions">
+                            <select id="filterByRole" class="filter-select">
+                                <option value="all">All Roles</option>
+                                <option value="employee">Employee</option>
+                                <option value="manager">Manager</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                            <select id="filterByStatus" class="filter-select">
+                                <option value="all">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Manager</th>
+                                    <th>Status</th>
+                                    <th>Last Login</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="pagination">
+                        <button id="prevUserPage" disabled><i class="fas fa-chevron-left"></i></button>
+                        <span id="userPageInfo">Page 1 of 1</span>
+                        <button id="nextUserPage" disabled><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Workflow Builder Section -->
+            <section id="workflowSection" class="admin-section">
+                <div class="section-header">
+                    <h1><i class="fas fa-project-diagram"></i> Approval Workflow Builder</h1>
+                    <div class="header-actions">
+                        <button id="saveWorkflowBtn" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Workflow
+                        </button>
+                        <button id="newWorkflowBtn" class="btn btn-outline">
+                            <i class="fas fa-plus"></i> New Workflow
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="workflow-container">
+                    <div class="workflow-sidebar">
+                        <h3>Workflow Components</h3>
+                        <div class="components-list">
+                            <div class="component" draggable="true" data-type="approver">
+                                <i class="fas fa-user-check"></i> Approver
+                            </div>
+                            <div class="component" draggable="true" data-type="condition">
+                                <i class="fas fa-code-branch"></i> Condition
+                            </div>
+                            <div class="component" draggable="true" data-type="notification">
+                                <i class="fas fa-bell"></i> Notification
+                            </div>
+                            <div class="component" draggable="true" data-type="delay">
+                                <i class="fas fa-clock"></i> Delay
+                            </div>
+                        </div>
+                        
+                        <div class="workflow-templates">
+                            <h3>Templates</h3>
+                            <div class="template" data-template="simple-approval">
+                                <i class="fas fa-file-alt"></i> Simple Approval
+                            </div>
+                            <div class="template" data-template="manager-then-finance">
+                                <i class="fas fa-sitemap"></i> Manager → Finance
+                            </div>
+                            <div class="template" data-template="conditional-approval">
+                                <i class="fas fa-random"></i> Conditional Approval
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-canvas" id="workflowCanvas">
+                        <div class="workflow-start">
+                            <div class="node start-node">
+                                <i class="fas fa-play"></i>
+                                <span>Start</span>
+                            </div>
+                            <div class="node-connector"></div>
+                        </div>
+                        
+                        <div class="workflow-nodes" id="workflowNodes">
+                            <!-- Workflow nodes will be added here -->
+                        </div>
+                        
+                        <div class="workflow-end">
+                            <div class="node-connector"></div>
+                            <div class="node end-node">
+                                <i class="fas fa-flag-checkered"></i>
+                                <span>End</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-properties">
+                        <div class="properties-header">
+                            <h3>Properties</h3>
+                            <button id="closeProperties" class="btn-icon">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="properties-content" id="propertiesContent">
+                            <div class="no-selection">
+                                <i class="fas fa-mouse-pointer"></i>
+                                <p>Select a node to edit its properties</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="workflow-actions">
+                    <button id="testWorkflowBtn" class="btn btn-outline">
+                        <i class="fas fa-vial"></i> Test Workflow
+                    </button>
+                    <button id="publishWorkflowBtn" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> Publish Workflow
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Company Settings Section -->
+            <section id="settingsSection" class="admin-section">
+                <div class="section-header">
+                    <h1><i class="fas fa-cog"></i> Company Settings</h1>
+                    <button id="saveSettingsBtn" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+                
+                <div class="settings-container">
+                    <div class="settings-tabs">
+                        <div class="tab active" data-tab="general">General</div>
+                        <div class="tab" data-tab="expense-categories">Expense Categories</div>
+                        <div class="tab" data-tab="integrations">Integrations</div>
+                        <div class="tab" data-tab="billing">Billing</div>
+                    </div>
+                    
+                    <div class="settings-content">
+                        <div id="generalTab" class="tab-content active">
+                            <div class="form-group">
+                                <label for="companyName">Company Name</label>
+                                <input type="text" id="companyName" class="form-control" value="Acme Inc.">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="companyLogo">Company Logo</label>
+                                <div class="file-upload">
+                                    <input type="file" id="companyLogo" accept="image/*">
+                                    <label for="companyLogo" class="btn btn-outline">
+                                        <i class="fas fa-upload"></i> Upload Logo
+                                    </label>
+                                    <span class="file-name">No file selected</span>
+                                </div>
+                                <div class="logo-preview" id="logoPreview">
+                                    <img src="" alt="Logo Preview" id="logoPreviewImg">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="defaultCurrency">Default Currency</label>
+                                    <select id="defaultCurrency" class="form-control">
+                                        <option value="USD">US Dollar (USD)</option>
+                                        <option value="EUR">Euro (EUR)</option>
+                                        <option value="GBP">British Pound (GBP)</option>
+                                        <option value="JPY">Japanese Yen (JPY)</option>
+                                        <option value="INR">Indian Rupee (INR)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="dateFormat">Date Format</label>
+                                    <select id="dateFormat" class="form-control">
+                                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="timezone">Time Zone</label>
+                                <select id="timezone" class="form-control">
+                                    <option value="UTC-12:00">(UTC-12:00) International Date Line West</option>
+                                    <option value="UTC-08:00" selected>(UTC-08:00) Pacific Time (US & Canada)</option>
+                                    <option value="UTC-07:00">(UTC-07:00) Mountain Time (US & Canada)</option>
+                                    <option value="UTC-06:00">(UTC-06:00) Central Time (US & Canada)</option>
+                                    <option value="UTC-05:00">(UTC-05:00) Eastern Time (US & Canada)</option>
+                                    <option value="UTC">(UTC) Greenwich Mean Time</option>
+                                    <option value="UTC+01:00">(UTC+01:00) Central European Time</option>
+                                    <option value="UTC+05:30">(UTC+05:30) India Standard Time</option>
+                                    <option value="UTC+09:00">(UTC+09:00) Japan Standard Time</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="expense-categoriesTab" class="tab-content">
+                            <div class="form-group">
+                                <label>Expense Categories</label>
+                                <div class="categories-list" id="categoriesList">
+                                    <!-- Categories will be added here by JavaScript -->
+                                </div>
+                                <button id="addCategoryBtn" class="btn btn-outline btn-sm">
+                                    <i class="fas fa-plus"></i> Add Category
+                                </button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Receipt Requirements</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="requireReceipts" checked>
+                                        <span class="checkmark"></span>
+                                        Require receipts for all expenses
+                                    </label>
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="enforceReceiptAmounts">
+                                        <span class="checkmark"></span>
+                                        Require receipt for expenses over $25
+                                    </label>
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="allowMultipleReceipts" checked>
+                                        <span class="checkmark"></span>
+                                        Allow multiple receipts per expense
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="integrationsTab" class="tab-content">
+                            <div class="integrations-grid">
+                                <div class="integration-card">
+                                    <div class="integration-header">
+                                        <img src="https://logo.clearbit.com/quickbooks.com" alt="QuickBooks" class="integration-logo">
+                                        <h4>QuickBooks Online</h4>
+                                        <label class="switch">
+                                            <input type="checkbox" id="quickbooksEnabled">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <p>Sync expenses, vendors, and accounting data with QuickBooks Online.</p>
+                                    <button class="btn btn-outline btn-sm btn-block" id="configureQuickbooks">
+                                        <i class="fas fa-cog"></i> Configure
+                                    </button>
+                                </div>
+                                
+                                <div class="integration-card">
+                                    <div class="integration-header">
+                                        <img src="https://logo.clearbit.com/xero.com" alt="Xero" class="integration-logo">
+                                        <h4>Xero</h4>
+                                        <label class="switch">
+                                            <input type="checkbox" id="xeroEnabled">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <p>Connect with Xero to sync expenses, contacts, and accounting data.</p>
+                                    <button class="btn btn-outline btn-sm btn-block" id="configureXero">
+                                        <i class="fas fa-cog"></i> Configure
+                                    </button>
+                                </div>
+                                
+                                <div class="integration-card">
+                                    <div class="integration-header">
+                                        <img src="https://logo.clearbit.com/slack.com" alt="Slack" class="integration-logo">
+                                        <h4>Slack</h4>
+                                        <label class="switch">
+                                            <input type="checkbox" id="slackEnabled" checked>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <p>Get notifications and approve expenses directly from Slack.</p>
+                                    <button class="btn btn-outline btn-sm btn-block" id="configureSlack">
+                                        <i class="fas fa-cog"></i> Configure
+                                    </button>
+                                </div>
+                                
+                                <div class="integration-card">
+                                    <div class="integration-header">
+                                        <img src="https://logo.clearbit.com/google.com" alt="Google Workspace" class="integration-logo">
+                                        <h4>Google Workspace</h4>
+                                        <label class="switch">
+                                            <input type="checkbox" id="googleEnabled">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <p>Connect with Google Drive and Gmail for receipt storage and email integration.</p>
+                                    <button class="btn btn-outline btn-sm btn-block" id="configureGoogle">
+                                        <i class="fas fa-cog"></i> Configure
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="billingTab" class="tab-content">
+                            <div class="billing-summary">
+                                <div class="billing-card">
+                                    <h4>Current Plan</h4>
+                                    <div class="plan-name">Business Pro</div>
+                                    <div class="plan-price">$29.99 <span class="plan-period">/month</span></div>
+                                    <div class="plan-users">Up to 50 users</div>
+                                    <button class="btn btn-outline btn-block mt-3">Change Plan</button>
+                                </div>
+                                
+                                <div class="billing-details">
+                                    <h4>Billing Details</h4>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Billing Cycle:</span>
+                                        <span class="detail-value">Monthly</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Next Billing Date:</span>
+                                        <span class="detail-value">November 1, 2023</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Payment Method:</span>
+                                        <div class="payment-method">
+                                            <i class="fab fa-cc-visa"></i>
+                                            <span>Visa ending in 4242</span>
+                                            <button class="btn-link">Update</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="mt-4">Billing History</h4>
+                                    <div class="billing-history">
+                                        <div class="billing-item">
+                                            <div class="billing-date">Oct 1, 2023</div>
+                                            <div class="billing-amount">$29.99</div>
+                                            <div class="billing-receipt">
+                                                <a href="#" class="btn-link">Receipt</a>
+                                            </div>
+                                        </div>
+                                        <div class="billing-item">
+                                            <div class="billing-date">Sep 1, 2023</div>
+                                            <div class="billing-amount">$29.99</div>
+                                            <div class="billing-receipt">
+                                                <a href="#" class="btn-link">Receipt</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- AI Policy Assistant Section -->
+            <section id="aiPolicySection" class="admin-section">
+                <div class="section-header">
+                    <h1><i class="fas fa-robot"></i> AI Policy Assistant</h1>
+                    <div class="header-actions">
+                        <button id="applySuggestionsBtn" class="btn btn-primary" disabled>
+                            <i class="fas fa-magic"></i> Apply Suggestions
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="ai-assistant-container">
+                    <div class="ai-sidebar">
+                        <div class="ai-profile">
+                            <div class="ai-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3>Policy Assistant</h3>
+                            <p>Analyzing your expense patterns to suggest optimal approval policies.</p>
+                        </div>
+                        
+                        <div class="ai-suggestions-list">
+                            <div class="suggestion-category active" data-category="approval">
+                                <i class="fas fa-check-circle"></i> Approval Workflows
+                                <span class="suggestion-count">3</span>
+                            </div>
+                            <div class="suggestion-category" data-category="categories">
+                                <i class="fas fa-tags"></i> Expense Categories
+                                <span class="suggestion-count">2</span>
+                            </div>
+                            <div class="suggestion-category" data-category="limits">
+                                <i class="fas fa-chart-line"></i> Spending Limits
+                                <span class="suggestion-count">1</span>
+                            </div>
+                            <div class="suggestion-category" data-category="compliance">
+                                <i class="fas fa-shield-alt"></i> Compliance
+                                <span class="suggestion-count">1</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-actions">
+                            <button id="analyzeExpensesBtn" class="btn btn-outline btn-block">
+                                <i class="fas fa-sync"></i> Re-analyze Expenses
+                            </button>
+                            <button id="viewInsightsBtn" class="btn btn-outline btn-block">
+                                <i class="fas fa-chart-pie"></i> View Expense Insights
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-main">
+                        <div class="ai-chat" id="aiChat">
+                            <div class="message ai-message">
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-header">
+                                        <span class="message-sender">Policy Assistant</span>
+                                        <span class="message-time">Just now</span>
+                                    </div>
+                                    <div class="message-text">
+                                        <p>Hello! I've analyzed your expense patterns and have some recommendations to optimize your approval workflows and policies. Here's what I've found:</p>
+                                        
+                                        <div class="suggestion-card" data-suggestion-id="s1">
+                                            <div class="suggestion-header">
+                                                <h4>Multi-level Approval for High Expenses</h4>
+                                                <label class="switch">
+                                                    <input type="checkbox" class="suggestion-toggle" checked>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </div>
+                                            <p>I noticed several expenses over $1,000 that were approved by a single manager. Consider implementing a multi-level approval process for expenses over $1,000.</p>
+                                            <div class="suggestion-stats">
+                                                <div class="stat">
+                                                    <span class="stat-value">$1,250</span>
+                                                    <span class="stat-label">Average high expense</span>
+                                                </div>
+                                                <div class="stat">
+                                                    <span class="stat-value">12</span>
+                                                    <span class="stat-label">Expenses affected</span>
+                                                </div>
+                                                <div class="stat">
+                                                    <span class="stat-value">$15,000</span>
+                                                    <span class="stat-label">Total amount</span>
+                                                </div>
+                                            </div>
+                                            <div class="suggestion-actions">
+                                                <button class="btn-link">View Details</button>
+                                                <button class="btn-link">Configure</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="suggestion-card" data-suggestion-id="s2">
+                                            <div class="suggestion-header">
+                                                <h4>Category-Specific Approvers</h4>
+                                                <label class="switch">
+                                                    <input type="checkbox" class="suggestion-toggle" checked>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </div>
+                                            <p>For expenses in the 'Software' category, route approvals to the IT department head for better oversight.</p>
+                                            <div class="suggestion-stats">
+                                                <div class="stat">
+                                                    <span class="stat-value">8</span>
+                                                    <span class="stat-label">Software expenses</span>
+                                                </div>
+                                                <div class="stat">
+                                                    <span class="stat-value">$3,200</span>
+                                                    <span class="stat-label">Total amount</span>
+                                                </div>
+                                            </div>
+                                            <div class="suggestion-actions">
+                                                <button class="btn-link">View Details</button>
+                                                <button class="btn-link">Configure</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-input-container">
+                            <div class="ai-input-box">
+                                <input type="text" id="aiQueryInput" placeholder="Ask me anything about your expense policies...">
+                                <button id="sendQueryBtn" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                            <div class="ai-examples">
+                                <span>Try asking:</span>
+                                <button class="example-query">How can I reduce travel expenses?</button>
+                                <button class="example-query">Show me expense trends by department</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-sidebar-right">
+                        <div class="ai-insights">
+                            <h3>Policy Impact</h3>
+                            <div class="insight-card">
+                                <div class="insight-icon success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="insight-details">
+                                    <div class="insight-title">Policy Compliance</div>
+                                    <div class="insight-value">87%</div>
+                                    <div class="insight-progress">
+                                        <div class="progress-bar" style="width: 87%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card">
+                                <div class="insight-icon warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="insight-details">
+                                    <div class="insight-title">Policy Violations</div>
+                                    <div class="insight-value">13%</div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar bg-warning" style="width: 13%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card">
+                                <div class="insight-icon info">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="insight-details">
+                                    <div class="insight-title">Avg. Approval Time</div>
+                                    <div class="insight-value">1.2 days</div>
+                                    <div class="insight-subtext">Industry avg: 2.5 days</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-tips">
+                            <h3>Quick Tips</h3>
+                            <div class="tip">
+                                <i class="fas fa-lightbulb"></i>
+                                <p>Set up automated approval rules for expenses under $50 to speed up processing.</p>
+                            </div>
+                            <div class="tip">
+                                <i class="fas fa-lightbulb"></i>
+                                <p>Consider implementing per-diem rates for travel expenses to simplify reporting.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Add/Edit User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="userModalTitle">Add New User</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select id="role" class="form-control" required>
+                                <option value="">Select Role</option>
+                                <option value="employee">Employee</option>
+                                <option value="manager">Manager</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="manager">Manager</label>
+                            <select id="manager" class="form-control">
+                                <option value="">Select Manager</option>
+                                <!-- Will be populated by JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select id="department" class="form-control">
+                            <option value="">Select Department</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="sales">Sales</option>
+                            <option value="finance">Finance</option>
+                            <option value="hr">Human Resources</option>
+                            <option value="operations">Operations</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Status</label>
+                        <div class="radio-group">
+                            <label class="radio-container">
+                                <input type="radio" name="status" value="active" checked>
+                                <span class="radio-checkmark"></span>
+                                Active
+                            </label>
+                            <label class="radio-container">
+                                <input type="radio" name="status" value="inactive">
+                                <span class="radio-checkmark"></span>
+                                Inactive
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancelUserBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="saveUserBtn">Save User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content confirm-modal">
+            <div class="modal-header">
+                <h2 id="confirmTitle">Confirm Action</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to perform this action?</p>
+                <div class="confirm-actions">
+                    <button class="btn btn-outline" id="cancelConfirmBtn">Cancel</button>
+                    <button class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success/Error Notification -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <i class="fas fa-check-circle notification-icon"></i>
+            <span id="notificationMessage">Operation completed successfully!</span>
+        </div>
+        <button class="notification-close">&times;</button>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
+    <script>
+    // Enhanced tab system with better error handling
+    document.addEventListener('DOMContentLoaded', function() {
+        function initializeTabs() {
+            const containers = document.querySelectorAll('.settings-container');
+            
+            containers.forEach(container => {
+                const tabs = container.querySelectorAll('.settings-tabs .tab');
+                const tabContents = container.querySelectorAll('.settings-content .tab-content');
+                
+                // Initialize first tab as active if none is active
+                let hasActive = false;
+                tabs.forEach(tab => {
+                    if (tab.classList.contains('active')) hasActive = true;
+                });
+                
+                if (!hasActive && tabs.length > 0) {
+                    tabs[0].classList.add('active');
+                    const firstTabId = tabs[0].getAttribute('data-tab');
+                    if (firstTabId) {
+                        const firstContent = document.getElementById(firstTabId + 'Tab');
+                        if (firstContent) firstContent.classList.add('active');
+                    }
+                }
+                
+                // Add click handlers
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Remove active class from all tabs and contents in this container
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        
+                        // Add active class to clicked tab
+                        this.classList.add('active');
+                        
+                        // Show corresponding content
+                        const tabId = this.getAttribute('data-tab');
+                        if (tabId) {
+                            const content = document.getElementById(tabId + 'Tab');
+                            if (content) {
+                                content.classList.add('active');
+                            } else {
+                                console.error('Could not find tab content for:', tabId);
+                            }
+                        }
+                    });
+                });
+            });
+        }
+        
+        // Initialize tabs immediately if DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTabs);
+        } else {
+            initializeTabs();
+        }
+        
+        // Re-initialize tabs when navigating to the settings section
+        const settingsLinks = document.querySelectorAll('a[href*="settings"]');
+        settingsLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                setTimeout(initializeTabs, 100);
+            });
+        });
+    });
+    </script>
+    <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,917 @@
+/* 
+ * CSS Variables (Custom Properties)
+ * These variables are used throughout the stylesheet for consistent theming
+ */
+:root {
+    --primary-color: #4a6cf7;
+    --primary-light: #eef1fe;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --light-gray: #f8f9fa;
+    --dark-gray: #343a40;
+    --border-color: #e9ecef;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fb;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* 
+ * ====================
+ * Header Styles
+ * ====================
+ */
+.expenses-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: var(--primary-color);
+    background-color: var(--primary-light);
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.back-button:hover {
+    background-color: #e0e5ff;
+    transform: translateX(-2px);
+}
+
+.back-button i {
+    font-size: 1.1rem;
+}
+
+.expenses-header h1 {
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+/* 
+ * ====================
+ * Summary Cards
+ * Displays key metrics at the top of the page
+ * ====================
+ */
+.expense-summary {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 8px;
+    padding: 8px 0;
+    margin-right: 20px;
+}
+
+.summary-item {
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.summary-item .label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--secondary-color);
+    margin-bottom: 4px;
+}
+
+.summary-item .amount {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.summary-item.to-submit .amount {
+    color: var(--warning-color);
+}
+
+.summary-item.waiting-approval .amount {
+    color: var(--primary-color);
+}
+
+.summary-divider {
+    width: 1px;
+    height: 40px;
+    background-color: var(--border-color);
+}
+
+/* 
+ * ====================
+ * Filter Controls
+ * Search and filter options for expenses
+ * ====================
+ */
+/* Expense Actions */
+.expense-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.expense-actions .btn {
+    min-width: 120px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.expense-actions .btn i {
+    font-size: 0.9em;
+}
+
+.expense-actions .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-color);
+}
+
+.expense-actions .btn-outline {
+    background-color: white;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.expense-actions .btn-outline:hover {
+    background-color: #f8f9fa;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .expense-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .expense-actions .btn {
+        width: 100%;
+    }
+}
+
+/* Existing filters styles */
+.expenses-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 15px 10px 35px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-group label {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+}
+
+.filter-group select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+}
+
+/* 
+ * ====================
+ * Data Table
+ * Styles for the main expenses data table
+ * ====================
+ */
+.expenses-table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Table header specific styles */
+th {
+    background-color: var(--light-gray);
+    font-weight: 600;
+    color: var(--dark-gray);
+    cursor: pointer;
+    user-select: none;
+}
+
+th i {
+    margin-left: 5px;
+    color: var(--secondary-color);
+    font-size: 0.8em;
+}
+
+tr:hover {
+    background-color: rgba(74, 108, 247, 0.05);
+}
+
+/* 
+ * ====================
+ * Status Badges
+ * Visual indicators for expense statuses
+ * ====================
+ */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-draft {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* 
+ * ====================
+ * Button Styles
+ * Common button styles and variants
+ * ====================
+ */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn i {
+    font-size: 0.9em;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #3a5ce4;
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline:hover {
+    background-color: rgba(74, 108, 247, 0.1);
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+}
+
+/* 
+ * ====================
+ * Modal Dialog
+ * Styles for the expense details modal
+ * ====================
+ */
+/*Modal Tabs */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--secondary-color);
+    transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+    color: var(--primary-color);
+}
+
+.tab-button.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-pane {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* 
+ * ====================
+ * Comments Section
+ * Styles for the comments tab and comment items
+ * ====================
+ */
+.comments-container {
+    padding: 1rem 0;
+}
+
+.comments-list {
+    margin-bottom: 1.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--light-gray);
+}
+
+.comments-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.comments-list::-webkit-scrollbar-track {
+    background: var(--light-gray);
+    border-radius: 3px;
+}
+
+.comments-list::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 3px;
+}
+
+.comment {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.comment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: var(--dark-gray);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.comment-role {
+    font-size: 0.75rem;
+    background: var(--primary-light);
+    color: var(--primary-color);
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.comment-date {
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.comment-body {
+    color: #444;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+.comment-body p {
+    margin: 0;
+}
+
+.no-comments {
+    text-align: center;
+    color: var(--secondary-color);
+    padding: 2rem 1rem;
+    background: var(--light-gray);
+    border-radius: 8px;
+    font-style: italic;
+}
+
+/* Add Comment Form */
+.add-comment {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    margin-top: 1.5rem;
+}
+
+.add-comment h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--dark-gray);
+    font-size: 1.1rem;
+}
+
+.comment-form .form-group {
+    margin-bottom: 1rem;
+}
+
+/* Receipt Section */
+.receipt-section {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+}
+
+.receipt-section .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.receipt-section h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--dark-gray);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.receipt-preview {
+    margin: 1rem 0;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 1rem;
+    border: 1px dashed #ddd;
+}
+
+.receipt-preview img {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.download-receipt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    margin-top: 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.download-receipt:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.download-receipt:active {
+    transform: translateY(0);
+}
+
+/* Tooltip styles */
+.tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    margin-left: 0.5rem;
+    cursor: help;
+}
+
+.tooltip .fa-question-circle {
+    color: #6c757d;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.tooltip:hover .fa-question-circle {
+    color: var(--primary-color);
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 240px;
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 12px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.comment-form .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.15);
+    outline: none;
+}
+
+.comment-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .comment-date {
+        font-size: 0.75rem;
+    }
+    
+    .add-comment {
+        padding: 1rem;
+    }
+    
+    .comment-form .form-actions {
+        flex-direction: column;
+    }
+    
+    .comment-form .btn {
+        width: 100%;
+    }
+}
+
+.add-comment {
+    background: #f8f9fa;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.add-comment .form-group {
+    margin-bottom: 15px;
+}
+
+.add-comment .form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.add-comment .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.add-comment h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    color: var(--dark-gray);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--dark-gray);
+    font-size: 1.5rem;
+}
+
+.close-modal {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--secondary-color);
+}
+
+.close-modal:hover {
+    color: var(--dark-gray);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+/* 
+ * ====================
+ * Notification System
+ * Toast notifications for user feedback
+ * ====================
+ */
+.notification-center {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1100;
+    max-width: 350px;
+}
+
+.notification {
+    background: white;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    animation: slideIn 0.3s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.notification::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.notification.success::after {
+    background-color: var(--success-color);
+}
+
+.notification.error::after {
+    background-color: var(--danger-color);
+}
+
+.notification.warning::after {
+    background-color: var(--warning-color);
+}
+
+.notification i {
+    font-size: 1.2rem;
+    margin-top: 2px;
+}
+.notification.success i {
+    color: var(--success-color);
+}
+
+/* 
+ * Screen reader only text - visually hidden but accessible
+ * https://www.w3.org/TR/WCAG20-TECHNiques/H28.html
+ */
+.sr-only {
+    color: var(--danger-color);
+}
+
+.notification.warning i {
+    color: var(--warning-color);
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* 
+ * ====================
+ * Utility Classes
+ * Reusable helper classes
+ * ====================
+ */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* 
+ * ====================
+ * Print Styles
+ * Optimized styles for printing
+ * ====================
+ */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    .expenses-table-container,
+    .expenses-table-container * {
+        visibility: visible;
+    }
+    
+    .expenses-table-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none;
+    }
+    
+    .btn, .search-box, .filter-group {
+        display: none !important;
+    }
+}

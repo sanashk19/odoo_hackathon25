@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Buttons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        button {
+            padding: 12px 24px;
+            margin: 10px 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .log-entry {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel Button Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Direct Button Click</h2>
+        <button onclick="testClick('Button 1')">Click Me - Test 1</button>
+        <button onclick="testClick('Button 2')">Click Me - Test 2</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Workflow Buttons (Simulated)</h2>
+        <button id="testSaveBtn">Save Workflow</button>
+        <button id="testNewBtn">New Workflow</button>
+        <button id="testTestBtn">Test Workflow</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Add User Button (Simulated)</h2>
+        <button id="testAddUserBtn">+ Add User</button>
+    </div>
+    
+    <div class="log" id="logOutput">
+        <div class="log-entry info">Console output will appear here...</div>
+    </div>
+    
+    <script>
+        // Log function
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('logOutput');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        // Test direct click
+        function testClick(buttonName) {
+            log(`✅ ${buttonName} clicked successfully!`, 'success');
+        }
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Page loaded, initializing...', 'info');
+            
+            // Test workflow buttons
+            const saveBtn = document.getElementById('testSaveBtn');
+            const newBtn = document.getElementById('testNewBtn');
+            const testBtn = document.getElementById('testTestBtn');
+            const addUserBtn = document.getElementById('testAddUserBtn');
+            
+            log(`Save button found: ${!!saveBtn}`, saveBtn ? 'success' : 'error');
+            log(`New button found: ${!!newBtn}`, newBtn ? 'success' : 'error');
+            log(`Test button found: ${!!testBtn}`, testBtn ? 'success' : 'error');
+            log(`Add User button found: ${!!addUserBtn}`, addUserBtn ? 'success' : 'error');
+            
+            if (saveBtn) {
+                saveBtn.addEventListener('click', function() {
+                    log('💾 Save Workflow button clicked!', 'success');
+                    alert('Save Workflow clicked!');
+                });
+                log('✅ Save button event listener attached', 'success');
+            }
+            
+            if (newBtn) {
+                newBtn.addEventListener('click', function() {
+                    log('🆕 New Workflow button clicked!', 'success');
+                    alert('New Workflow clicked!');
+                });
+                log('✅ New button event listener attached', 'success');
+            }
+            
+            if (testBtn) {
+                testBtn.addEventListener('click', function() {
+                    log('🧪 Test Workflow button clicked!', 'success');
+                    alert('Test Workflow clicked!');
+                });
+                log('✅ Test button event listener attached', 'success');
+            }
+            
+            if (addUserBtn) {
+                addUserBtn.addEventListener('click', function() {
+                    log('🔘 Add User button clicked!', 'success');
+                    alert('Add User clicked!');
+                });
+                log('✅ Add User button event listener attached', 'success');
+            }
+            
+            log('✅ All buttons initialized successfully!', 'success');
+        });
+        
+        // Test if admin.js functions exist
+        setTimeout(() => {
+            log('--- Checking for admin.js functions ---', 'info');
+            const functions = [
+                'saveWorkflow',
+                'createNewWorkflow', 
+                'testWorkflow',
+                'openUserModal'
+            ];
+            
+            functions.forEach(func => {
+                const exists = typeof window[func] === 'function';
+                log(`${func}: ${exists ? '✅ Found' : '❌ Not found'}`, exists ? 'success' : 'error');
+            });
+        }, 1000);
+    </script>
+</body>
+</html>

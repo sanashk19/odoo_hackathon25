@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Expense Tracker - Compliance & ESG Ready</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<body>
+    <!-- Mobile Menu Overlay -->
+    <div class="overlay"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo" onclick="window.location='index.html'">
+                <i class="fas fa-leaf"></i>
+                <h1>EcoExpense</h1>
+            </div>
+            
+            <!-- Back Button -->
+            <a href="manage.html" class="back-btn" title="Back to Manager Portal">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <!-- Navigation -->
+            <nav class="nav">
+                <button class="nav-btn active" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </button>
+                <button class="nav-btn" data-tab="expenses">
+                    <i class="fas fa-receipt"></i> Expenses
+                </button>
+                <button class="nav-btn" data-tab="compliance">
+                    <i class="fas fa-shield-alt"></i> Compliance
+                </button>
+                <button class="nav-btn" data-tab="reports">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </button>
+                <button class="nav-btn btn-primary" onclick="window.location.href='manage.html'">
+                    <i class="fas fa-user-tie"></i> Manager
+                </button>
+                <button class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <!-- Total Expenses Card -->
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total Expenses</h3>
+                        <p class="stat-value" id="totalExpenses">₹12,450</p>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 12% from last month
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pending Approvals Card -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Pending Approvals</h3>
+                        <p class="stat-value" id="pendingApprovals">5</p>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-up"></i> 2 new today
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Carbon Footprint Card -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #10B981, #059669);">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Carbon Footprint</h3>
+                        <p class="stat-value" id="carbonFootprint">245 kg</p>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-down"></i> 8% less than last month
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Policy Violations Card -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #EF4444, #DC2626);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Policy Violations</h3>
+                        <p class="stat-value" id="policyViolations">3</p>
+                        <div class="stat-change">
+                            <i class="fas fa-equals"></i> No change
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-chart-line"></i> Expense Overview
+                    </h2>
+                    <div class="chart-actions">
+                        <button class="chart-btn active">Weekly</button>
+                        <button class="chart-btn">Monthly</button>
+                        <button class="chart-btn">Yearly</button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <canvas id="expenseChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expenses Tab -->
+        <div id="expenses" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-plus-circle"></i> Add New Expense
+                    </h2>
+                </div>
+                <div class="card-content">
+                    <form id="expenseForm" class="expense-form">
+                        <div class="form-row">
+                            <div class="form-group with-icon">
+                                <i class="fas fa-rupee-sign form-icon"></i>
+                                <input type="number" id="expenseAmount" placeholder=" " required>
+                                <label for="expenseAmount">Amount (₹)</label>
+                            </div>
+                            
+                            <div class="form-group with-icon">
+                                <i class="fas fa-tags form-icon"></i>
+                                <select id="expenseCategory" required>
+                                    <option value="" disabled selected></option>
+                                    <option value="travel">Travel</option>
+                                    <option value="food">Food & Dining</option>
+                                    <option value="accommodation">Accommodation</option>
+                                    <option value="office">Office Supplies</option>
+                                    <option value="fuel">Fuel</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <label for="expenseCategory">Category</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group with-icon">
+                                <i class="far fa-calendar-alt form-icon"></i>
+                                <input type="date" id="expenseDate" required>
+                                <label for="expenseDate">Date</label>
+                            </div>
+                            
+                            <div class="form-group with-icon">
+                                <i class="far fa-comment-alt form-icon"></i>
+                                <input type="text" id="expenseDescription" placeholder=" " required>
+                                <label for="expenseDescription">Description</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="receiptUpload">Receipt (Optional)</label>
+                            <div class="file-upload">
+                                <input type="file" id="receiptUpload" class="file-upload-input" accept="image/*">
+                                <label for="receiptUpload" class="file-upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <div class="file-upload-text">
+                                        <span>Click to upload or drag and drop</span>
+                                        <span>PNG, JPG, PDF (max. 5MB)</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Expense
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-history"></i> Recent Expenses
+                    </h2>
+                    <div class="card-actions">
+                        <button class="btn btn-sm btn-outline">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div id="expensesList" class="expenses-list">
+                        <!-- Expenses will be populated here -->
+                        <div class="empty-state">
+                            <i class="fas fa-receipt"></i>
+                            <h3>No expenses yet</h3>
+                            <p>Add your first expense to get started</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compliance & ESG Tab -->
+        <div id="compliance" class="tab-content">
+            <div class="compliance-intro">
+                <h1><i class="fas fa-shield-alt"></i> Compliance & ESG Reporting</h1>
+                <p class="subtitle">Generate audit-ready reports with sustainability insights aligned to SDG 13</p>
+            </div>
+
+            <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <!-- Policy Compliance Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-gavel"></i> Policy Compliance
+                        </h2>
+                        <span class="badge badge-success">95% Compliant</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="compliance-score">
+                            <div class="score-circle">
+                                <svg class="progress-ring" width="120" height="120">
+                                    <circle class="progress-ring-circle" stroke="#E5E7EB" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                                    <circle class="progress-ring-circle" stroke="#10B981" stroke-width="8" stroke-linecap="round" fill="transparent" r="52" cx="60" cy="60" style="stroke-dasharray: 327, 327; stroke-dashoffset: 16;"/>
+                                </svg>
+                                <div class="score-value">95%</div>
+                            </div>
+                            <div class="score-details">
+                                <div class="score-metric">
+                                    <span class="metric-label">Policies Active</span>
+                                    <div class="metric-bar">
+                                        <div class="metric-fill" style="width: 100%;"></div>
+                                    </div>
+                                    <span class="metric-value">12/12</span>
+                                </div>
+                                <div class="score-metric">
+                                    <span class="metric-label">Compliance Rate</span>
+                                    <div class="metric-bar">
+                                        <div class="metric-fill" style="width: 95%;"></div>
+                                    </div>
+                                    <span class="metric-value">95%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="violation-list" id="violationList">
+                            <div class="violation-item">
+                                <i class="fas fa-exclamation-circle text-warning"></i>
+                                <div class="violation-details">
+                                    <h4>Expense Limit Exceeded</h4>
+                                    <p>2 violations this month</p>
+                                </div>
+                                <button class="btn btn-sm btn-ghost">View</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-block btn-secondary" onclick="checkPolicyCompliance()">
+                            <i class="fas fa-sync-alt"></i> Run Compliance Check
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Environmental Impact Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-leaf"></i> Environmental Impact
+                        </h2>
+                        <span class="badge badge-info">SDG 13</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="esg-metrics">
+                            <div class="esg-metric">
+                                <div class="esg-icon">
+                                    <i class="fas fa-smog"></i>
+                                </div>
+                                <div class="esg-details">
+                                    <span class="metric-label">CO₂ Emissions</span>
+                                    <span class="metric-value" id="totalEmissions">245 kg</span>
+                                    <div class="metric-change positive">
+                                        <i class="fas fa-arrow-down"></i> 8% from last month
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="esg-metric">
+                                <div class="esg-icon">
+                                    <i class="fas fa-tree"></i>
+                                </div>
+                                <div class="esg-details">
+                                    <span class="metric-label">Carbon Offset</span>
+                                    <span class="metric-value" id="carbonOffset">₹1,225</span>
+                                    <div class="metric-change">
+                                        <i class="fas fa-equals"></i> 5 trees needed
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carbon-chart" style="margin-top: 1.5rem;">
+                            <canvas id="carbonChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GST Compliance Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-file-invoice-dollar"></i> Tax Compliance
+                        </h2>
+                        <span class="badge badge-primary">GST Ready</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="gst-summary">
+                            <div class="gst-metric">
+                                <div class="gst-icon">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                </div>
+                                <div class="gst-details">
+                                    <span class="metric-label">GST Collected</span>
+                                    <span class="metric-value" id="totalGST">₹2,234</span>
+                                    <div class="metric-change positive">
+                                        <i class="fas fa-arrow-up"></i> 12% from last quarter
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="gst-metric">
+                                <div class="gst-icon">
+                                    <i class="fas fa-receipt"></i>
+                                </div>
+                                <div class="gst-details">
+                                    <span class="metric-label">Input Tax Credit</span>
+                                    <span class="metric-value" id="inputTaxCredit">₹1,845</span>
+                                    <div class="metric-change negative">
+                                        <i class="fas fa-arrow-up"></i> 5% from last quarter
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gst-actions" style="margin-top: 1.5rem;">
+                            <button class="btn btn-block btn-primary" onclick="calculateGST()">
+                                <i class="fas fa-calculator"></i> Calculate GST
+                            </button>
+                            <button class="btn btn-block btn-outline" style="margin-top: 0.5rem;">
+                                <i class="fas fa-file-export"></i> Export GSTR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Generation Card -->
+                <div class="card" style="grid-column: 1 / -1;">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-file-pdf"></i> Generate Compliance Report
+                        </h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="report-options">
+                            <div class="form-group-inline">
+                                <div class="form-check">
+                                    <input type="checkbox" id="complianceReport" class="form-checkbox" checked>
+                                    <label for="complianceReport">Policy Compliance</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="esgReport" class="form-checkbox" checked>
+                                    <label for="esgReport">ESG Impact</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="gstReport" class="form-checkbox" checked>
+                                    <label for="gstReport">GST Compliance</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 1.5rem;">
+                                <label for="reportPeriod">Report Period</label>
+                                <div class="form-group-addon">
+                                    <select id="reportPeriod" class="form-control">
+                                        <option value="monthly">Last Month</option>
+                                        <option value="quarterly" selected>Last Quarter</option>
+                                        <option value="yearly">Last Year</option>
+                                        <option value="custom">Custom Range</option>
+                                    </select>
+                                    <div class="addon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="report-actions" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button class="btn btn-secondary" onclick="previewReport()">
+                                <i class="fas fa-eye"></i> Preview Report
+                            </button>
+                            <button class="btn btn-primary" onclick="generateComplianceReport()">
+                                <i class="fas fa-download"></i> Download PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="reports-header">
+                <h1><i class="fas fa-chart-pie"></i> Analytics & Reports</h1>
+                <p>Gain insights into your spending patterns and compliance metrics</p>
+            </div>
+            
+            <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                <!-- Expense Analytics Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-chart-pie"></i> Expense Analytics
+                        </h2>
+                        <div class="card-actions">
+                            <div class="btn-group">
+                                <button class="btn btn-sm active">Monthly</button>
+                                <button class="btn btn-sm">Quarterly</button>
+                                <button class="btn btn-sm">Yearly</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="categoryChart" height="300"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Spending Summary Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-wallet"></i> Spending Summary
+                        </h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="spending-metrics">
+                            <div class="spending-metric">
+                                <div class="metric-icon" style="background: rgba(99, 102, 241, 0.1);">
+                                    <i class="fas fa-utensils" style="color: #6366F1;"></i>
+                                </div>
+                                <div class="metric-details">
+                                    <span class="metric-label">Food & Dining</span>
+                                    <span class="metric-value">₹4,250</span>
+                                    <div class="metric-change negative">
+                                        <i class="fas fa-arrow-up"></i> 12%
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="spending-metric">
+                                <div class="metric-icon" style="background: rgba(16, 185, 129, 0.1);">
+                                    <i class="fas fa-car" style="color: #10B981;"></i>
+                                </div>
+                                <div class="metric-details">
+                                    <span class="metric-label">Travel</span>
+                                    <span class="metric-value">₹3,780</span>
+                                    <div class="metric-change positive">
+                                        <i class="fas fa-arrow-down"></i> 8%
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="spending-metric">
+                                <div class="metric-icon" style="background: rgba(245, 158, 11, 0.1);">
+                                    <i class="fas fa-hotel" style="color: #F59E0B;"></i>
+                                </div>
+                                <div class="metric-details">
+                                    <span class="metric-label">Accommodation</span>
+                                    <span class="metric-value">₹2,950</span>
+                                    <div class="metric-change positive">
+                                        <i class="fas fa-arrow-down"></i> 15%
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="spending-metric">
+                                <div class="metric-icon" style="background: rgba(236, 72, 153, 0.1);">
+                                    <i class="fas fa-shopping-bag" style="color: #EC4899;"></i>
+                                </div>
+                                <div class="metric-details">
+                                    <span class="metric-label">Shopping</span>
+                                    <span class="metric-value">₹1,470</span>
+                                    <div class="metric-change negative">
+                                        <i class="fas fa-arrow-up"></i> 5%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                <!-- Approval Trends Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-chart-line"></i> Approval Trends
+                        </h2>
+                        <div class="card-actions">
+                            <div class="btn-group">
+                                <button class="btn btn-sm active">Monthly</button>
+                                <button class="btn btn-sm">Quarterly</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="approvalChart" height="250"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Compliance Trends Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-shield-alt"></i> Compliance Trends
+                        </h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="compliance-score-trend">
+                            <div class="trend-header">
+                                <div class="trend-metric">
+                                    <span class="metric-label">Current Score</span>
+                                    <span class="metric-value">95%</span>
+                                </div>
+                                <div class="trend-change positive">
+                                    <i class="fas fa-arrow-up"></i> 5% from last month
+                                </div>
+                            </div>
+                            <div class="trend-chart">
+                                <canvas id="complianceTrendChart" height="180"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Export Section -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-file-export"></i> Export Reports
+                    </h2>
+                </div>
+                <div class="card-content">
+                    <div class="export-options">
+                        <div class="form-group">
+                            <label for="exportType">Report Type</label>
+                            <select id="exportType" class="form-control">
+                                <option value="expense">Expense Report</option>
+                                <option value="compliance">Compliance Report</option>
+                                <option value="esg">ESG Impact Report</option>
+                                <option value="tax">Tax Report</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="startDate">Start Date</label>
+                                <input type="date" id="startDate" class="form-control" value="2023-01-01">
+                            </div>
+                            <div class="form-group">
+                                <label for="endDate">End Date</label>
+                                <input type="date" id="endDate" class="form-control" value="2023-12-31">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="exportFormat">Format</label>
+                            <div class="btn-group" style="width: 100%;">
+                                <button class="btn active">
+                                    <i class="far fa-file-pdf"></i> PDF
+                                </button>
+                                <button class="btn">
+                                    <i class="far fa-file-excel"></i> Excel
+                                </button>
+                                <button class="btn">
+                                    <i class="far fa-file-csv"></i> CSV
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+                            <i class="fas fa-download"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.querySelector('.theme-toggle');
+        const html = document.documentElement;
+        
+        // Check for saved theme preference or use system preference
+        const savedTheme = localStorage.getItem('theme') || 
+                          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        html.setAttribute('data-theme', savedTheme);
+        
+        // Update icon based on current theme
+        updateThemeIcon(savedTheme);
+        
+        // Toggle theme on button click
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme) {
+            const icon = themeToggle.querySelector('i');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        
+        // Mobile Menu Toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('.nav');
+        const overlay = document.querySelector('.overlay');
+        
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+        });
+        
+        overlay.addEventListener('click', () => {
+            nav.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+        
+        // Tab Switching
+        const tabButtons = document.querySelectorAll('.nav-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                // Update active tab
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Show selected tab content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                    }
+                });
+                
+                // Close mobile menu if open
+                nav.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+        
+        // Initialize tooltips
+        const tooltipTriggers = document.querySelectorAll('[data-tooltip]');
+        tooltipTriggers.forEach(trigger => {
+            trigger.addEventListener('mouseenter', (e) => {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = trigger.getAttribute('data-tooltip');
+                document.body.appendChild(tooltip);
+                
+                const rect = trigger.getBoundingClientRect();
+                tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
+                tooltip.style.left = `${rect.left + (rect.width - tooltip.offsetWidth) / 2}px`;
+                
+                trigger.addEventListener('mouseleave', () => {
+                    tooltip.remove();
+                }, { once: true });
+            });
+        });
+        
+        // Sample data for charts (replace with actual data)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Sample data for expense chart
+            const expenseCtx = document.getElementById('expenseChart')?.getContext('2d');
+            if (expenseCtx) {
+                new Chart(expenseCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        datasets: [{
+                            label: 'Expenses',
+                            data: [6500, 5900, 8000, 8100, 8600, 9250, 12450],
+                            borderColor: '#4F46E5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Sample data for category chart
+            const categoryCtx = document.getElementById('categoryChart')?.getContext('2d');
+            if (categoryCtx) {
+                new Chart(categoryCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Travel', 'Food', 'Accommodation', 'Office', 'Other'],
+                        datasets: [{
+                            data: [35, 25, 20, 15, 5],
+                            backgroundColor: [
+                                '#4F46E5',
+                                '#10B981',
+                                '#F59E0B',
+                                '#6366F1',
+                                '#EC4899'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                position: 'right'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Sample data for approval chart
+            const approvalCtx = document.getElementById('approvalChart')?.getContext('2d');
+            if (approvalCtx) {
+                new Chart(approvalCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [
+                            {
+                                label: 'Approved',
+                                data: [12, 15, 18, 14, 16, 20],
+                                backgroundColor: '#10B981'
+                            },
+                            {
+                                label: 'Pending',
+                                data: [3, 5, 4, 6, 4, 2],
+                                backgroundColor: '#F59E0B'
+                            },
+                            {
+                                label: 'Rejected',
+                                data: [1, 0, 2, 1, 0, 1],
+                                backgroundColor: '#EF4444'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Sample data for carbon chart
+            const carbonCtx = document.getElementById('carbonChart')?.getContext('2d');
+            if (carbonCtx) {
+                new Chart(carbonCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                        datasets: [{
+                            label: 'Carbon Footprint (kg CO₂)',
+                            data: [320, 280, 260, 245],
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 200,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Sample data for compliance trend chart
+            const complianceTrendCtx = document.getElementById('complianceTrendChart')?.getContext('2d');
+            if (complianceTrendCtx) {
+                new Chart(complianceTrendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        datasets: [{
+                            label: 'Compliance Score',
+                            data: [82, 85, 88, 87, 89, 92, 95],
+                            borderColor: '#4F46E5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#4F46E5',
+                            pointBorderColor: '#fff',
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: '#4F46E5',
+                            pointHoverBorderColor: '#fff',
+                            pointHitRadius: 10,
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleFont: {
+                                    size: 14,
+                                    weight: '600'
+                                },
+                                bodyFont: {
+                                    size: 13
+                                },
+                                padding: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Score: ${context.parsed.y}%`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 75,
+                                max: 100,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        elements: {
+                            line: {
+                                borderWidth: 3
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

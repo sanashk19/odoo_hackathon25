@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeNavi - Expense Management</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="logo">
+                <img src="https://img.freepik.com/premium-vector/s-letter-logo-colorful-gradient-design_161396-885.jpg" alt="SafeNavi Logo" class="logo-image">
+                <h1>SafeNavi</h1>
+                <p>Expense Management System</p>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm" class="form active">
+                <h2>Sign In</h2>
+                <div class="form-group">
+                    <input type="email" id="loginEmail" required>
+                    <label for="loginEmail">Email</label>
+                    <div id="emailError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" required>
+                    <label for="loginPassword">Password</label>
+                    <div id="passwordError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <select id="loginCountry" required>
+                        <option value="" disabled selected>Select Country</option>
+                        <option value="US">United States (USD)</option>
+                        <option value="GB">United Kingdom (GBP)</option>
+                        <option value="IN">India (INR)</option>
+                        <option value="JP">Japan (JPY)</option>
+                        <option value="EU">European Union (EUR)</option>
+                    </select>
+                    <label for="loginCountry">Country</label>
+                </div>
+                <div class="form-group">
+                    <select id="loginRole" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <option value="employee">Employee</option>
+                        <option value="manager">Manager</option>
+                        
+                    </select>
+                    <label for="loginRole">Role</label>
+                </div>
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary">Sign In</button>
+                <p class="switch-form">Don't have an account? <a href="#" id="showSignup">Sign up</a></p>
+            </form>
+
+            <!-- Signup Form (initially hidden) -->
+            <form id="signupForm" class="form">
+                <h2>Create Account</h2>
+                <div class="form-group">
+                    <input type="text" id="fullName" required>
+                    <label for="fullName">Full Name</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="signupEmail" required>
+                    <label for="signupEmail">Email</label>
+                    <div id="signupEmailError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="signupPassword" required>
+                    <label for="signupPassword">Password</label>
+                    <div id="signupPasswordError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="companyName" required>
+                    <label for="companyName">Company Name</label>
+                </div>
+                <div class="form-group">
+                    <select id="country" required>
+                        <option value="" disabled selected>Select Country</option>
+                        <!-- Countries will be populated by JavaScript -->
+                    </select>
+                    <label for="country">Country</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+                <p class="switch-form">Already have an account? <a href="#" id="showLogin">Sign in</a></p>
+            </form>
+
+            <!-- OTP Verification Modal -->
+            <div id="otpModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Verify Your Email</h2>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>We've sent a 6-digit verification code to <span id="userEmail"></span></p>
+                        <div class="otp-container">
+                            <input type="text" maxlength="1" class="otp-input" data-index="0">
+                            <input type="text" maxlength="1" class="otp-input" data-index="1">
+                            <input type="text" maxlength="1" class="otp-input" data-index="2">
+                            <span class="otp-separator">-</span>
+                            <input type="text" maxlength="1" class="otp-input" data-index="3">
+                            <input type="text" maxlength="1" class="otp-input" data-index="4">
+                            <input type="text" maxlength="1" class="otp-input" data-index="5">
+                            <button type="button" id="fillDebugOtp" class="debug-otp-btn" title="Fill test OTP (123456)">🔧</button>
+                        </div>
+                        <p class="resend-otp">
+                            Didn't receive the code? 
+                            <a href="#" id="resendOtp">Resend OTP</a>
+                            <span id="countdown">(1:00)</span>
+                        </p>
+                        <button id="verifyOtpBtn" class="btn btn-primary" disabled>Verify & Continue</button>
+                        <p class="otp-error" id="otpError"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="auth.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

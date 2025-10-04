@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - SafeNavi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <div class="profile-container">
+        <header class="profile-header">
+            <a href="emp.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <h1><i class="fas fa-user-circle"></i> My Profile</h1>
+        </header>
+
+        <div class="profile-content">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                    <button class="edit-avatar-btn" id="changeAvatarBtn">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+                <h2 id="userFullName">Loading...</h2>
+                <p class="user-email" id="userEmail">Loading...</p>
+            </div>
+
+            <div class="details-card">
+                <h3><i class="fas fa-info-circle"></i> Personal Information</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Full Name</span>
+                    <span class="detail-value" id="profileFullName">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value" id="profileEmail">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Country</span>
+                    <span class="detail-value" id="profileCountry">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Currency</span>
+                    <span class="detail-value" id="profileCurrency">-</span>
+                </div>
+            </div>
+
+            <div class="actions-card">
+                <h3><i class="fas fa-cog"></i> Account Settings</h3>
+                <button class="btn btn-edit" id="editProfileBtn">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </button>
+                <button class="btn btn-change-password" id="changePasswordBtn">
+                    <i class="fas fa-key"></i> Change Password
+                </button>
+                <button class="btn btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="profile.js"></script>
+</body>
+</html>

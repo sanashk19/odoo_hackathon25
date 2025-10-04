@@ -1,0 +1,41 @@
+{
+    "name": "ecoexpense-tracker",
+    "version": "1.0.0",
+    "description": "Compliance & ESG Ready Expense Tracker with SDG 13 alignment",
+    "main": "index.html",
+    "scripts": {
+      "start": "npx serve .",
+      "dev": "npx live-server .",
+      "build": "echo 'No build process needed for static files'",
+      "deploy": "echo 'Ready for deployment to any static hosting service'"
+    },
+    "keywords": [
+      "expense-tracker",
+      "compliance",
+      "esg",
+      "sdg-13",
+      "carbon-footprint",
+      "gst",
+      "hackathon",
+      "audit-ready"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/yourusername/ecoexpense-tracker.git"
+    },
+    "bugs": {
+      "url": "https://github.com/yourusername/ecoexpense-tracker/issues"
+    },
+    "homepage": "https://github.com/yourusername/ecoexpense-tracker#readme",
+    "devDependencies": {
+      "live-server": "^1.2.2",
+      "serve": "^14.2.1"
+    },
+    "dependencies": {},
+    "engines": {
+      "node": ">=14.0.0"
+    }
+  }
+  

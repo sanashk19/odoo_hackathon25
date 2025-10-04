@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection - SafeNavi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="detection.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="https://img.freepik.com/premium-vector/s-letter-logo-colorful-gradient-design_161396-885.jpg" alt="Logo">
+                <h2>SafeNavi</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="manage.html"><i class="fas fa-tasks"></i> Approval Queue</a></li>
+                <li class="active"><a href="#" id="fraudDetectionLink"><i class="fas fa-shield-alt"></i> Fraud Detection</a></li>
+                <li><a href="admin.html"><i class="fas fa-user-shield"></i> Admin Panel</a></li>
+                <li class="logout-li"><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li class="user-email">
+                    <i class="fas fa-user-tie"></i>
+                    <span id="userEmail"></span>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header>
+                <h1><i class="fas fa-shield-alt"></i> Fraud Detection Dashboard</h1>
+                <div class="header-actions">
+                    <div class="date-range">
+                        <i class="far fa-calendar-alt"></i>
+                        <input type="text" id="dateRange" placeholder="Select date range">
+                    </div>
+                    <button id="refreshBtn" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card high-risk">
+                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-info">
+                        <h3>High Risk</h3>
+                        <p id="highRiskCount">0</p>
+                        <span class="stat-change up">+2.5% from last week</span>
+                    </div>
+                </div>
+                <div class="stat-card medium-risk">
+                    <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <div class="stat-info">
+                        <h3>Medium Risk</h3>
+                        <p id="mediumRiskCount">0</p>
+                        <span class="stat-change down">-1.2% from last week</span>
+                    </div>
+                </div>
+                <div class="stat-card policy-violations">
+                    <div class="stat-icon"><i class="fas fa-ban"></i></div>
+                    <div class="stat-info">
+                        <h3>Policy Violations</h3>
+                        <p id="policyViolationsCount">0</p>
+                        <span class="stat-change up">+3.1% from last week</span>
+                    </div>
+                </div>
+                <div class="stat-card total-saved">
+                    <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="stat-info">
+                        <h3>Potential Savings</h3>
+                        <p id="potentialSavings">$0</p>
+                        <span class="stat-change up">+$1,250 this month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card fade-in" style="animation-delay: 0.2s">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-pie me-2"></i>Risk Distribution</h3>
+                            <div class="card-actions">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline dropdown-toggle" type="button" id="riskChartFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                                        This Month
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="riskChartFilter">
+                                        <li><a class="dropdown-item" href="#" data-period="week">This Week</a></li>
+                                        <li><a class="dropdown-item active" href="#" data-period="month">This Month</a></li>
+                                        <li><a class="dropdown-item" href="#" data-period="quarter">This Quarter</a></li>
+                                        <li><a class="dropdown-item" href="#" data-period="year">This Year</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="riskDistributionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card fade-in" style="animation-delay: 0.3s">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-bar me-2"></i>Violations by Category</h3>
+                            <div class="card-actions">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline active" data-metric="count">Count</button>
+                                    <button type="button" class="btn btn-sm btn-outline" data-metric="amount">Amount</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="violationsByCategoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suspicious Expenses Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Suspicious Expenses</h3>
+                    <div class="filter-actions">
+                        <select id="filterByRisk" class="filter-select">
+                            <option value="all">All Risks</option>
+                            <option value="high">High Risk</option>
+                            <option value="medium">Medium Risk</option>
+                            <option value="low">Low Risk</option>
+                        </select>
+                        <select id="filterByViolation" class="filter-select">
+                            <option value="all">All Violations</option>
+                            <option value="duplicate">Duplicates</option>
+                            <option value="amount">Amount Anomalies</option>
+                            <option value="time">Time Anomalies</option>
+                            <option value="category">Category Violations</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="suspiciousExpensesTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllExpenses"></th>
+                                <th>Expense ID</th>
+                                <th>Employee</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Risk Level</th>
+                                <th>Violation Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="suspiciousExpensesBody">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="pagination">
+                        <button class="btn btn-outline" id="prevPage">Previous</button>
+                        <span id="pageInfo">Page 1 of 1</span>
+                        <button class="btn btn-outline" id="nextPage">Next</button>
+                    </div>
+                    <div class="bulk-actions">
+                        <select id="bulkAction" class="filter-select" disabled>
+                            <option value="">Bulk Actions</option>
+                            <option value="approve">Approve Selected</option>
+                            <option value="reject">Reject Selected</option>
+                            <option value="escalate">Escalate for Review</option>
+                        </select>
+                        <button id="applyBulkAction" class="btn btn-primary" disabled>Apply</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Expense Detail Modal -->
+    <div id="expenseDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Expense Review</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body" id="expenseDetailContent">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="approveExpense">Approve</button>
+                <button class="btn btn-outline" id="rejectExpense">Reject</button>
+                <button class="btn btn-outline" id="escalateExpense">Escalate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="auth.js"></script>
+    <script src="detection-demo.js"></script>
+</body>
+</html>
